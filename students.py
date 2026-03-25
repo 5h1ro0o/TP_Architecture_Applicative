@@ -14,6 +14,14 @@ def add_grade_4(cls):
     return StudentWithGrade4
 
 
+def add_iter_matter_4(cls):
+    class SchoolClassWithMatter4(cls):
+        def iter_matter_4(self):
+            return StudentIterator(self.students, 3)
+
+    return SchoolClassWithMatter4
+
+
 @add_grade_4
 class Student:
 
@@ -76,20 +84,7 @@ class StudentIteratorMatter3(Iterator):
         return student
 
 
-class StudentIteratorMatter4(Iterator):
-
-    def __init__(self, students: list):
-        self.__students = sorted(students, key=lambda s: s.grades[3], reverse=True)
-        self.__index = 0
-
-    def __next__(self):
-        if self.__index >= len(self.__students):
-            raise StopIteration
-        student = self.__students[self.__index]
-        self.__index += 1
-        return student
-
-
+@add_iter_matter_4
 class SchoolClass(Iterable):
 
     def __init__(self):
@@ -106,9 +101,6 @@ class SchoolClass(Iterable):
 
     def iter_matter_3(self):
         return StudentIteratorMatter3(self.__students)
-
-    def iter_matter_4(self):
-        return StudentIteratorMatter4(self.__students)
 
     def rank_by_average(self):
         return sorted(self.__students, key=lambda s: s.average, reverse=True)
@@ -136,7 +128,7 @@ if __name__ == '__main__':
     for student in school_class.iter_matter_3():
         print(f'  {student.name}: {student.grades[2]}')
 
-    print('\nClassement Matière 4 (iterator):')
+    print('\nClassement Matière 4 (iterator via décorateur):')
     for student in school_class.iter_matter_4():
         print(f'  {student.name}: {student.grades[3]}')
 
