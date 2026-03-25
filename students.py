@@ -22,6 +22,16 @@ def add_iter_matter_4(cls):
     return SchoolClassWithMatter4
 
 
+class SchoolClassSingleton(type):
+
+    instance = None
+
+    def __call__(cls, *args, **kwargs):
+        if cls.instance is None:
+            cls.instance = super().__call__(*args, **kwargs)
+        return cls.instance
+
+
 @add_grade_4
 class Student:
 
@@ -85,7 +95,7 @@ class StudentIteratorMatter3(Iterator):
 
 
 @add_iter_matter_4
-class SchoolClass(Iterable):
+class SchoolClass(Iterable, metaclass=SchoolClassSingleton):
 
     def __init__(self):
         self.__students = []
@@ -115,6 +125,10 @@ if __name__ == '__main__':
     school_class.add_student(Student('J', 10, 12, 13, 15))
     school_class.add_student(Student('A', 8, 2, 17, 11))
     school_class.add_student(Student('V', 9, 14, 14, 7))
+
+    school_class_copy = SchoolClass()
+    assert school_class is school_class_copy
+    print(f'Singleton vérifié : school_class is school_class_copy = {school_class is school_class_copy}')
 
     print('\nClassement Matière 1 (iterator):')
     for student in school_class:
