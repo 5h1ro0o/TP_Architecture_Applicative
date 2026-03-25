@@ -1,6 +1,20 @@
 from collections.abc import Iterable, Iterator
 
 
+def add_grade_4(cls):
+    class StudentWithGrade4(cls):
+        def __init__(self, name: str, grade1: float, grade2: float, grade3: float, grade4: float):
+            super().__init__(name, grade1, grade2, grade3)
+            self.__grade4 = grade4
+
+        @property
+        def grades(self):
+            return super().grades + [self.__grade4]
+
+    return StudentWithGrade4
+
+
+@add_grade_4
 class Student:
 
     def __init__(self, name: str, grade1: float, grade2: float, grade3: float):
@@ -17,7 +31,7 @@ class Student:
 
     @property
     def average(self):
-        return sum(self.__grades) / len(self.__grades)
+        return sum(self.grades) / len(self.grades)
 
 
 class StudentIterator(Iterator):
@@ -62,6 +76,20 @@ class StudentIteratorMatter3(Iterator):
         return student
 
 
+class StudentIteratorMatter4(Iterator):
+
+    def __init__(self, students: list):
+        self.__students = sorted(students, key=lambda s: s.grades[3], reverse=True)
+        self.__index = 0
+
+    def __next__(self):
+        if self.__index >= len(self.__students):
+            raise StopIteration
+        student = self.__students[self.__index]
+        self.__index += 1
+        return student
+
+
 class SchoolClass(Iterable):
 
     def __init__(self):
@@ -79,6 +107,9 @@ class SchoolClass(Iterable):
     def iter_matter_3(self):
         return StudentIteratorMatter3(self.__students)
 
+    def iter_matter_4(self):
+        return StudentIteratorMatter4(self.__students)
+
     def rank_by_average(self):
         return sorted(self.__students, key=lambda s: s.average, reverse=True)
 
@@ -89,9 +120,9 @@ class SchoolClass(Iterable):
 
 if __name__ == '__main__':
     school_class = SchoolClass()
-    school_class.add_student(Student('J', 10, 12, 13))
-    school_class.add_student(Student('A', 8, 2, 17))
-    school_class.add_student(Student('V', 9, 14, 14))
+    school_class.add_student(Student('J', 10, 12, 13, 15))
+    school_class.add_student(Student('A', 8, 2, 17, 11))
+    school_class.add_student(Student('V', 9, 14, 14, 7))
 
     print('\nClassement Matière 1 (iterator):')
     for student in school_class:
@@ -104,6 +135,10 @@ if __name__ == '__main__':
     print('\nClassement Matière 3 (iterator):')
     for student in school_class.iter_matter_3():
         print(f'  {student.name}: {student.grades[2]}')
+
+    print('\nClassement Matière 4 (iterator):')
+    for student in school_class.iter_matter_4():
+        print(f'  {student.name}: {student.grades[3]}')
 
     print('\nClassement par moyenne:')
     for student in school_class.rank_by_average():
