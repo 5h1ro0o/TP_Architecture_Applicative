@@ -34,6 +34,34 @@ class StudentIterator(Iterator):
         return student
 
 
+class StudentIteratorMatter2(Iterator):
+
+    def __init__(self, students: list):
+        self.__students = sorted(students, key=lambda s: s.grades[1], reverse=True)
+        self.__index = 0
+
+    def __next__(self):
+        if self.__index >= len(self.__students):
+            raise StopIteration
+        student = self.__students[self.__index]
+        self.__index += 1
+        return student
+
+
+class StudentIteratorMatter3(Iterator):
+
+    def __init__(self, students: list):
+        self.__students = sorted(students, key=lambda s: s.grades[2], reverse=True)
+        self.__index = 0
+
+    def __next__(self):
+        if self.__index >= len(self.__students):
+            raise StopIteration
+        student = self.__students[self.__index]
+        self.__index += 1
+        return student
+
+
 class SchoolClass(Iterable):
 
     def __init__(self):
@@ -45,14 +73,11 @@ class SchoolClass(Iterable):
     def __iter__(self):
         return StudentIterator(self.__students, 0)
 
-    def rank_matter_1(self):
-        return sorted(self.__students, key=lambda s: s.grades[0], reverse=True)
+    def iter_matter_2(self):
+        return StudentIteratorMatter2(self.__students)
 
-    def rank_matter_2(self):
-        return sorted(self.__students, key=lambda s: s.grades[1], reverse=True)
-
-    def rank_matter_3(self):
-        return sorted(self.__students, key=lambda s: s.grades[2], reverse=True)
+    def iter_matter_3(self):
+        return StudentIteratorMatter3(self.__students)
 
     def rank_by_average(self):
         return sorted(self.__students, key=lambda s: s.average, reverse=True)
@@ -72,12 +97,12 @@ if __name__ == '__main__':
     for student in school_class:
         print(f'  {student.name}: {student.grades[0]}')
 
-    print('\nClassement Matière 2:')
-    for student in school_class.rank_matter_2():
+    print('\nClassement Matière 2 (iterator):')
+    for student in school_class.iter_matter_2():
         print(f'  {student.name}: {student.grades[1]}')
 
-    print('\nClassement Matière 3:')
-    for student in school_class.rank_matter_3():
+    print('\nClassement Matière 3 (iterator):')
+    for student in school_class.iter_matter_3():
         print(f'  {student.name}: {student.grades[2]}')
 
     print('\nClassement par moyenne:')
